@@ -13,9 +13,12 @@ NR == 1 {
 
 # Process the data rows
 NR > 1 {
-    # Process the month
+    # Process the month and remove leading zero
     split($4, date_arr, "/");
     month = date_arr[1];
+    if (substr(month, 1, 1) == "0") {
+        month = substr(month, 2);
+    }
 
     # Process the year
     year_dirty = date_arr[3];
