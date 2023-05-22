@@ -2,4 +2,22 @@
 
 # Author: Nicholas Choong 21980614
 
+# Check for the right number of arguments
+if [[ $# -ne 1 ]]; then
+  echo "Error: Incorrect number of arguments." >/dev/stderr
+  echo "Usage: $0 <file name> <command>" >/dev/stderr
+  exit 0
+fi
+
+file="$1"
+
+# Check if the output file exists
+if [[ ! -s "${file}" ]] || [[ "${file##*.}" != "tsv" ]]; then
+  echo "File ${file} must be a non-zero length .tsv file" >/dev/stderr
+  exit 1
+fi
+
+# Process the data
+awk -f preprocess.awk "$1"
+
 exit 0
