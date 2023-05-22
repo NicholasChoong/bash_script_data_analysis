@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # Description:
-#     Processes
+#     Computes the total number of incidents per month and calculates the median and median absolute deviation (MAD)
+#     across the 12 months. It then prints a table of the months with the number of incidents and a marker indicating
+#     if the count is above or below 1 MAD from the median.
 
 # Author: Nicholas Choong 21980614
 
@@ -23,19 +25,40 @@ fi
 # Read the data-file and extract the relevant columns
 data=$(tail -n +2 "${file}" | awk -F'\t' '{print $6}')
 
-# Compute the total number of incidents per month
 months=(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 
 declare -A counts
 
+# Compute the total number of incidents per month
 for ((i = 0; i < 12; i++)); do
   month="${months[i]}"
   count=$(awk -v month_idx=$((i + 1)) '$1 == month_idx {count++} END {print count}' <<<"${data}")
-  counts["${i}"]="${count}"
-  echo "${month}" "${count}"
+  counts[${i}]="${count}"
 done
 
 # Calculate the median and median absolute deviation (MAD)
 median=$(awk -f median.awk <(printf "%s\n" "${counts[@]}"))
+mad=$(awk -v median="${median}" -f mad.awk <(printf "%s\n" "${counts[@]}"))
+
+# Print the median and MAD
+echo "Median: ${median}"
+echo "MAD: ${mad}"
+
+# Print the table of incidents for each month
+for ((i = 0; i < 12; i++)); do
+
+  month=${months[${i}]}
+  count=${counts[${i}]}
+
+  if [[ $(awk -v count="$count" -v median="$median" -v mad="$mad" 'BEGIN {print (count >= median + mad)}') -eq 1 ]]; then
+    echo "${month} ${count} ++"
+
+  elif [[ $(awk -v count="$count" -v median="$median" -v mad="$mad" 'BEGIN {print (count <= median - mad)}') -eq 1 ]]; then
+    echo "${month} ${count} --"
+
+  else
+    echo "${month} ${count}"
+  fi
+done
 
 exit 0
