@@ -26,7 +26,11 @@ NR > 1 {
     year = year_arr[1];
     gsub(/^[ \t]+|[ \t]+$/, "", year);
     if (length(year) == 2) {
-        year = "20" year;
+        if (year >= "30") {
+            year = "19" year;
+        } else {
+            year = "20" year;
+        }
     }
 
     # Process the breach type
