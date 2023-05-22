@@ -1,5 +1,11 @@
 #!/usr/bin/env awk
 
+# Description:
+#     Performs several operations on the data, including adding a month and year column,
+#     removing everything in the Type of Breach field after the first comma or slash,
+#     dropping the Location of Breached Information and Summary columns.
+#     The output of preprocess is sent to standard output. 
+
 # Author: Nicholas Choong 21980614
 
 # Set the input and output field separators
@@ -9,7 +15,6 @@ BEGIN {FS = OFS = "\t"}
 NR == 1 {
     print $1, $2, $3, $4, $5, "Month", "Year"
 }
-
 
 # Process the data rows
 NR > 1 {

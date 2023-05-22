@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+# Description:
+#     Processes the data using an awk script called preprocess.awk and outputs the result to standard output.
+#     Adds month and year columns to the data, shorten the type of breach, and remove the unnecessary columns.
+
 # Author: Nicholas Choong 21980614
 
 # Check for the right number of arguments
 if [[ $# -ne 1 ]]; then
   echo "Error: Incorrect number of arguments." >/dev/stderr
-  echo "Usage: $0 <file name> <command>" >/dev/stderr
+  echo "Usage: $0 <file name>" >/dev/stderr
   exit 0
 fi
 
@@ -18,6 +22,6 @@ if [[ ! -s "${file}" ]] || [[ "${file##*.}" != "tsv" ]]; then
 fi
 
 # Process the data
-awk -f preprocess.awk "$1"
+awk -f preprocess.awk "${file}"
 
 exit 0
