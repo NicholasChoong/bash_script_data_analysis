@@ -13,10 +13,15 @@ NR == 1 {
 
 # Process the data rows
 NR > 1 {
-    # Process the month and year
+    # Process the month
     split($4, date_arr, "/");
     month = date_arr[1];
-    year = date_arr[3];
+
+    # Process the year
+    year_dirty = date_arr[3];
+    split(year_dirty, year_arr, "-");
+    year = year_arr[1];
+    gsub(/^[ \t]+|[ \t]+$/, "", year);
     if (length(year) == 2) {
         year = "20" year;
     }
