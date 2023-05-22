@@ -18,6 +18,11 @@ NR == 1 {
 
 # Process the data rows
 NR > 1 {
+    # Check if the second column is 5 characters long
+    if (length($2) != 2) {
+        next
+    }
+
     # Process the month and remove leading zero
     split($4, date_arr, "/");
     month = date_arr[1];
