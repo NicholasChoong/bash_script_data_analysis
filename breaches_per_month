@@ -1,5 +1,36 @@
 #!/usr/bin/env bash
 
+# Description:
+#     Processes
+
 # Author: Nicholas Choong 21980614
+
+# Check for the right number of arguments
+if [[ $# -ne 1 ]]; then
+  echo "Error: Incorrect number of arguments." >/dev/stderr
+  echo "Usage: $0 <file name> <command>" >/dev/stderr
+  exit 0
+fi
+
+file="$1"
+
+# Check if the output file exists
+if [[ ! -s "${file}" ]] || [[ "${file##*.}" != "tsv" ]]; then
+  echo "File ${file} must be a non-zero length .tsv file" >/dev/stderr
+  exit 1
+fi
+
+# Read the data-file and extract the relevant columns
+data=$(tail -n +2 "${file}" | awk -F'\t' '{print $6}')
+
+# Compute the total number of incidents per month
+months=(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+declare -A counts
+for ((i = 0; i < 12; i++)); do
+  month="${months[i]}"
+  count=$(awk -v month_idx=$((i + 1)) '$1 == month_idx {count++} END {print count}' <<<"${data}")
+  counts[i]="${count}"
+  echo "${month}" "${count}"
+done
 
 exit 0
