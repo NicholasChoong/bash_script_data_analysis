@@ -25,6 +25,11 @@ NR > 1 {
         month = substr(month, 2);
     }
 
+    # Check if the month value is correct
+    if (int(month) < 1 || int(month) > 12) {
+        next
+    }
+
     # Process the year
     year_dirty = date_arr[3];
     split(year_dirty, year_arr, "-");
@@ -36,6 +41,11 @@ NR > 1 {
         } else {
             year = "20" year;
         }
+    }
+
+    # Check if the year value is correct
+    if (int(year) < 1900 || int(year) > 2100) {
+        next
     }
 
     # Process the breach type
